@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { useStorageState } from "react-storage-hooks";
+
 import Header from './components/Header';
 import Posts from './components/Posts';
 import Post from './components/Post';
@@ -11,7 +13,7 @@ import Message from './components/Message';
 import './App.css';
 
 const App = (props) => {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useStorageState(localStorage, `state-posts`, []);
   const [message, setMessage] = useState(null);
 
   const setFlashMessage = (message) => {
