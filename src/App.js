@@ -39,6 +39,14 @@ const App = (props) => {
     setPosts(updatedPosts);
     setFlashMessage(`updated`);
   };
+
+  const deletePost = (post) => {
+    if (window.confirm("Delete this post?")) {
+      const updatedPosts = posts.filter((p) => p.id !== post.id);
+      setPosts(updatedPosts);
+      setFlashMessage(`deleted`);
+    }
+  };
   
   return (
     <Router>
@@ -46,7 +54,7 @@ const App = (props) => {
         <Header />
         {message && <Message type={message} />}
         <Switch>
-          <Route exact path="/" render={() => <Posts posts={posts} />} />
+          <Route exact path="/" render={() => <Posts posts={posts} deletePost={deletePost} />} />
           <Route path="/post/:postSlug" render={(props) => {const post = posts.find((post => post.slug === props.match.params.postSlug)); if (post) { return <Post post={post} />; } else {return <NotFound />} }} />
           <Route exact path="/new" render={() => <PostForm addNewPost={addNewPost} post={{ id: 0, slug: "", title: "", content: "" }} />} />
           <Route
