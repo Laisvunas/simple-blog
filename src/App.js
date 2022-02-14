@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Header from './components/Header';
 import Posts from './components/Posts';
 import Post from './components/Post';
@@ -48,7 +48,7 @@ const App = (props) => {
         <Switch>
           <Route exact path="/" render={() => <Posts posts={posts} />} />
           <Route path="/post/:postSlug" render={(props) => {const post = posts.find((post => post.slug === props.match.params.postSlug)); if (post) { return <Post post={post} />; } else {return <NotFound />} }} />
-          <Route exact path="/new" render={() => <PostForm addNewPost={addNewPost} />} />
+          <Route exact path="/new" render={() => <PostForm addNewPost={addNewPost} post={{ id: 0, slug: "", title: "", content: "" }} />} />
           <Route
             path="/edit/:postSlug"
             render={(props) => {
