@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import firebase from "./firebase";
 import { useStorageState } from "react-storage-hooks";
 
 import Header from './components/Header';
@@ -7,6 +8,7 @@ import Posts from './components/Posts';
 import Post from './components/Post';
 import NotFound from './components/NotFound';
 import PostForm from './components/PostForm';
+import Login from "./components/Login";
 import Message from './components/Message';
 
 
@@ -15,6 +17,14 @@ import './App.css';
 const App = (props) => {
   const [posts, setPosts] = useStorageState(localStorage, `state-posts`, []);
   const [message, setMessage] = useState(null);
+
+  const onLogin = (email, password) => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(user => console.log("Logged in"))
+      .catch((error) => console.error(error));
+  };
 
   const setFlashMessage = (message) => {
     setMessage(message);
@@ -72,6 +82,7 @@ const App = (props) => {
               }
             }}
           />
+          <Route exact path="/login" render={() => <Login onLogin={onLogin} />} />
           <Route component={NotFound} />
         </Switch>
         

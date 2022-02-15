@@ -11,6 +11,9 @@ const Header = (props) => {
         <li key="new">
           <Link to="/new">New Post</Link>
         </li>
+        <li>
+          <Link to="/login">Login</Link>
+        </li>
       </ul>
     </header>
   );
