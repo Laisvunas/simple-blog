@@ -52,32 +52,50 @@ const App = (props) => {
     }, 1600);
   };
 
-  const getNewSlugFromTitle = (title) =>
-    encodeURIComponent(title.toLowerCase().split(" ").join("-"));
+  const getNewSlugFromTitle = (title) => encodeURIComponent(title.toLowerCase().split(" ").join("-"));
 
   const addNewPost = (post) => {
-    post.id = posts.length + 1;
+    const postsRef = firebase.database().ref("posts");
     post.slug = getNewSlugFromTitle(post.title);
-    setPosts([...posts, post]);
+    delete post.key;
+    postsRef.push(post);
     setFlashMessage(`saved`);
   };
   
   const updatePost = (post) => {
-    post.slug = getNewSlugFromTitle(post.title);
-    const index = posts.findIndex((p) => p.id === post.id);
-    const oldPosts = posts.slice(0, index).concat(posts.slice(index + 1));
-    const updatedPosts = [...oldPosts, post].sort((a, b) => a.id - b.id);
-    setPosts(updatedPosts);
+    const postRef = firebase.database().ref("posts/" + post.key);
+    postRef.update({
+      slug: getNewSlugFromTitle(post.title),
+      title: post.title,
+      content: post.content,
+    });
     setFlashMessage(`updated`);
   };
 
   const deletePost = (post) => {
     if (window.confirm("Delete this post?")) {
-      const updatedPosts = posts.filter((p) => p.id !== post.id);
-      setPosts(updatedPosts);
+      const postRef = firebase.database().ref("posts/" + post.key);
+      postRef.remove();
       setFlashMessage(`deleted`);
     }
   };
+
+  useEffect(() => {
+    const postsRef = firebase.database().ref("posts");
+    postsRef.on("value", (snapshot) => {
+      const posts = snapshot.val();
+      const newStatePosts = [];
+      for (let post in posts) {
+        newStatePosts.push({
+          key: post,
+          slug: posts[post].slug,
+          title: posts[post].title,
+          content: posts[post].content,
+        });
+      }
+      setPosts(newStatePosts);
+    });
+  }, [setPosts]);
   
   return (
     <Router>
